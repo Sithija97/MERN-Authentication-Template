@@ -1,13 +1,25 @@
 import React from "react";
 
-function ScheduleCard() {
+function ScheduleCard(props) {
+  const deleteFunction = () => {
+    props.deleteSchedule(props.schedule._id);
+  };
   return (
     <div>
-      <h3>Note :</h3>
-      <h3>At :</h3>
-      <p>Date :</p>
+      <h3>Note :{props.schedule.message}</h3>
+
+      <h4>
+        @
+        {String(
+          new Date(
+            props.schedule.scheduleAt.toLocaleString(undefined, {
+              timezone: "Asia/Colombo",
+            })
+          )
+        )}
+      </h4>
       <div>
-        <button>Delete</button>
+        <button onClick={deleteFunction}>Delete</button>
       </div>
     </div>
   );
