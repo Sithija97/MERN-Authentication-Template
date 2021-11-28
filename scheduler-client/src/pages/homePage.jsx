@@ -24,14 +24,14 @@ function HomePage() {
       message,
       scheduleAt,
     });
-    await fetchData();
+    // await fetchData();
     setMessage("");
     setScheduleAt();
   };
 
   const deleteSchedule = async (id) => {
     await axios.post("http://localhost:9000/api/deleteSchedule", { id });
-    await fetchData();
+    // await fetchData();
   };
 
   return (
@@ -54,13 +54,14 @@ function HomePage() {
         yearPlaceholder="YYYY"
       />
       <button onClick={addSchedule}>Add Schedule</button>
-      {scheduleList.map((schedule) => (
-        <ScheduleCard
-          schedule={schedule}
-          key={schedule._id}
-          deleteSchedule={deleteSchedule}
-        />
-      ))}
+      {scheduleList &&
+        scheduleList.map((schedule) => (
+          <ScheduleCard
+            schedule={schedule}
+            key={schedule._id}
+            deleteSchedule={deleteSchedule}
+          />
+        ))}
     </div>
   );
 }

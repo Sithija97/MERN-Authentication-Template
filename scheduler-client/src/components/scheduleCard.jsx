@@ -9,11 +9,10 @@ function ScheduleCard(props) {
       <h3>Note :{props.schedule.message}</h3>
 
       <h4>
-        @
         {String(
           new Date(
             props.schedule.scheduleAt.toLocaleString(undefined, {
-              timezone: "Asia/Colombo",
+              timezone: "Asia/Kolkata",
             })
           )
         )}
