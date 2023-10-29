@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import WithSubnavigation from "./navbar";
+import { Navbar } from "../../components";
 
 export const Layout = () => {
   return (
     <>
-      <WithSubnavigation />
+      <Navbar />
       <Outlet />
     </>
   );

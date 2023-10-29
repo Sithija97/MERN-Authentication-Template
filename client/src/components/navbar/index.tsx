@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Box,
   Flex,
@@ -22,8 +20,10 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
+import { Link as RouterLink } from "react-router-dom";
+import { LOGIN, REGISTER } from "../../routes";
 
-export default function WithSubnavigation() {
+export const Navbar = () => {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -74,22 +74,22 @@ export default function WithSubnavigation() {
           spacing={6}
         >
           <Button
-            as={"a"}
+            as={RouterLink}
+            to={LOGIN}
             fontSize={"sm"}
             fontWeight={400}
             variant={"link"}
-            href={"#"}
           >
             Sign In
           </Button>
           <Button
-            as={"a"}
+            as={RouterLink}
+            to={REGISTER}
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
             fontWeight={600}
             color={"white"}
             bg={"facebook.400"}
-            href={"#"}
             _hover={{
               bg: "facebook.300",
             }}
@@ -104,7 +104,7 @@ export default function WithSubnavigation() {
       </Collapse>
     </Box>
   );
-}
+};
 
 const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
@@ -165,13 +165,13 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
       display={"block"}
       p={2}
       rounded={"md"}
-      _hover={{ bg: useColorModeValue("pink.50", "gray.900") }}
+      _hover={{ bg: useColorModeValue("facebook.50", "gray.900") }}
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
           <Text
             transition={"all .3s ease"}
-            _groupHover={{ color: "pink.400" }}
+            _groupHover={{ color: "facebook.400" }}
             fontWeight={500}
           >
             {label}
@@ -187,7 +187,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
           align={"center"}
           flex={1}
         >
-          <Icon color={"pink.400"} w={5} h={5} as={ChevronRightIcon} />
+          <Icon color={"facebook.400"} w={5} h={5} as={ChevronRightIcon} />
         </Flex>
       </Stack>
     </Box>
@@ -269,42 +269,42 @@ interface NavItem {
 }
 
 const NAV_ITEMS: Array<NavItem> = [
+  // {
+  //   label: "Inspiration",
+  //   children: [
+  //     {
+  //       label: "Explore Design Work",
+  //       subLabel: "Trending Design to inspire you",
+  //       href: "#",
+  //     },
+  //     {
+  //       label: "New & Noteworthy",
+  //       subLabel: "Up-and-coming Designers",
+  //       href: "#",
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: "Find Work",
+  //   children: [
+  //     {
+  //       label: "Job Board",
+  //       subLabel: "Find your dream design job",
+  //       href: "#",
+  //     },
+  //     {
+  //       label: "Freelance Projects",
+  //       subLabel: "An exclusive list for contract work",
+  //       href: "#",
+  //     },
+  //   ],
+  // },
   {
-    label: "Inspiration",
-    children: [
-      {
-        label: "Explore Design Work",
-        subLabel: "Trending Design to inspire you",
-        href: "#",
-      },
-      {
-        label: "New & Noteworthy",
-        subLabel: "Up-and-coming Designers",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Find Work",
-    children: [
-      {
-        label: "Job Board",
-        subLabel: "Find your dream design job",
-        href: "#",
-      },
-      {
-        label: "Freelance Projects",
-        subLabel: "An exclusive list for contract work",
-        href: "#",
-      },
-    ],
-  },
-  {
-    label: "Learn Design",
+    label: "Home",
     href: "#",
   },
   {
-    label: "Hire Designers",
+    label: "About",
     href: "#",
   },
 ];
