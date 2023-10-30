@@ -15,7 +15,9 @@ import {
   InputGroup,
   InputRightElement,
   Link,
+  Center,
 } from "@chakra-ui/react";
+import { FcGoogle } from "react-icons/fc";
 import { Link as RouterLink } from "react-router-dom";
 import { REGISTER } from "../../routes";
 
@@ -60,7 +62,7 @@ export const Login = () => {
                 </InputRightElement>
               </InputGroup>
             </FormControl>
-            <Stack spacing={10}>
+            <Stack spacing={5}>
               <Stack
                 direction={{ base: "column", sm: "row" }}
                 align={"start"}
@@ -77,6 +79,16 @@ export const Login = () => {
                 }}
               >
                 Sign in
+              </Button>
+              <Button
+                w={"full"}
+                maxW={"md"}
+                variant={"outline"}
+                leftIcon={<FcGoogle />}
+              >
+                <Center>
+                  <Text>Sign in with Google</Text>
+                </Center>
               </Button>
             </Stack>
             <Stack pt={6}>

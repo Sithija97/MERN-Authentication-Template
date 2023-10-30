@@ -20,7 +20,7 @@ import { LOGIN } from "../../routes";
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
-
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   return (
     <Flex
       minH={"100vh"}
@@ -58,6 +58,24 @@ export const Register = () => {
                     variant={"ghost"}
                     onClick={() =>
                       setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <FormControl id="confirmPassword" isRequired>
+              <FormLabel>Confirm Password</FormLabel>
+              <InputGroup>
+                <Input type={showConfirmPassword ? "text" : "password"} />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowConfirmPassword(
+                        (showConfirmPassword) => !showConfirmPassword
+                      )
                     }
                   >
                     {showPassword ? <ViewIcon /> : <ViewOffIcon />}
