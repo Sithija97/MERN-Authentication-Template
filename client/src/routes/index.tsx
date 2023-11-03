@@ -9,7 +9,7 @@ export const PROTECTED = "/protected";
 export const DASHBOARD = "/protected/dashboard";
 
 export const router = createBrowserRouter([
-  { path: ROOT, element: "Public Root" },
+  { path: ROOT, element: <Login /> },
   { path: LOGIN, element: <Login /> },
   { path: REGISTER, element: <Register /> },
   {
