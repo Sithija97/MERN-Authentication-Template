@@ -20,6 +20,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { LOGIN } from "../../routes";
+import { registerInputs } from "../../models";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -33,13 +34,6 @@ const validationSchema = Yup.object().shape({
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
 });
-
-type registerInputs = {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
