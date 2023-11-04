@@ -72,9 +72,8 @@ export const Login = () => {
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: (values) => {
       handleSubmit(values);
-      resetForm();
     },
   });
 
