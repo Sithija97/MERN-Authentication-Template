@@ -13,14 +13,18 @@ import {
   useColorModeValue,
   Link,
   FormErrorMessage,
+  useToast,
+  Center,
+  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { LOGIN } from "../../routes";
-import { registerInputs } from "../../models";
+import { register } from "../../store/auth/authslice";
+import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -35,12 +39,49 @@ const validationSchema = Yup.object().shape({
     .required("Password is required"),
 });
 
+type registerInputData = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export const Register = () => {
+  const toast = useToast();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = async (values: registerInputs) => {
-    console.log(values);
+  const { isLoading } = useAppSelector((state: RootState) => state.auth);
+
+  const bgColorFlex = useColorModeValue("gray.50", "gray.800");
+  const bgColorBox = useColorModeValue("white", "gray.700");
+
+  const handleSubmit = async (values: registerInputData) => {
+    const { username, email, password, confirmPassword } = values;
+    if (password !== confirmPassword) {
+      toast({
+        title: "Passwords don't match, please check again.",
+        status: "error",
+        isClosable: true,
+        position: "top-right",
+        duration: 5000,
+      });
+    } else {
+      const response = await dispatch(register({ username, email, password }));
+      if (response.meta.requestStatus === "fulfilled") {
+        toast({
+          title: "User created Successfully.",
+          status: "success",
+          isClosable: true,
+          position: "top-right",
+          duration: 5000,
+        });
+        formik.resetForm();
+        navigate(LOGIN);
+      }
+    }
   };
 
   const formik = useFormik({
@@ -51,30 +92,27 @@ export const Register = () => {
       confirmPassword: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: (values) => {
       handleSubmit(values);
-      resetForm();
     },
   });
+
+  if (isLoading)
+    return (
+      <Center my="10" w="100%" h="100vh">
+        <Spinner />
+      </Center>
+    );
+
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-    >
+    <Flex minH={"100vh"} align={"center"} justify={"center"} bg={bgColorFlex}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"} textAlign={"center"}>
             Sign up to your account
           </Heading>
         </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
+        <Box rounded={"lg"} bg={bgColorBox} boxShadow={"lg"} p={8}>
           <form onSubmit={formik.handleSubmit}>
             <Stack spacing={4}>
               <FormControl

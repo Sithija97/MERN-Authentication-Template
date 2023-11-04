@@ -17,13 +17,16 @@ import {
   Link,
   Center,
   FormErrorMessage,
+  Spinner,
 } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { REGISTER } from "../../routes";
+import { DASHBOARD, REGISTER } from "../../routes";
 import { loginInputs } from "../../models";
+import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
+import { login } from "../../store/auth/authslice";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -35,14 +38,21 @@ const validationSchema = Yup.object().shape({
 });
 
 export const Login = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  const { isLoading } = useAppSelector((state: RootState) => state.auth);
+
+  const bgColorFlex = useColorModeValue("gray.50", "gray.800");
+  const bgColorBox = useColorModeValue("white", "gray.700");
+
   const handleSubmit = async (values: loginInputs) => {
-    console.log(values);
-    // if (succeeded) {
-    //   formik.resetForm();
-    // }
-    //
+    const response = await dispatch(login(values));
+    if (response.meta.requestStatus === "fulfilled") {
+      formik.resetForm();
+      navigate(DASHBOARD);
+    }
   };
 
   const formik = useFormik({
@@ -57,23 +67,20 @@ export const Login = () => {
     },
   });
 
+  if (isLoading)
+    return (
+      <Center my="10" w="100%" h="100vh">
+        <Spinner />
+      </Center>
+    );
+
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={useColorModeValue("gray.50", "gray.800")}
-    >
+    <Flex minH={"100vh"} align={"center"} justify={"center"} bg={bgColorFlex}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"}>Sign in to your account</Heading>
         </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
+        <Box rounded={"lg"} bg={bgColorBox} boxShadow={"lg"} p={8}>
           <form onSubmit={formik.handleSubmit}>
             <Stack spacing={4}>
               <FormControl

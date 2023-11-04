@@ -20,11 +20,20 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { Link as RouterLink } from "react-router-dom";
-import { LOGIN, REGISTER } from "../../routes";
+import { useNavigate } from "react-router-dom";
+import { LOGIN } from "../../routes";
+import { useAppDispatch } from "../../store/store";
+import { logout } from "../../store/auth/authslice";
 
 export const Navbar = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { isOpen, onToggle } = useDisclosure();
+
+  const handleSignOut = () => {
+    dispatch(logout());
+    navigate(LOGIN);
+  };
 
   return (
     <Box>
@@ -73,7 +82,7 @@ export const Navbar = () => {
           direction={"row"}
           spacing={6}
         >
-          <Button
+          {/* <Button
             as={RouterLink}
             to={LOGIN}
             fontSize={"sm"}
@@ -81,10 +90,8 @@ export const Navbar = () => {
             variant={"link"}
           >
             Sign In
-          </Button>
+          </Button> */}
           <Button
-            as={RouterLink}
-            to={REGISTER}
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
             fontWeight={600}
@@ -93,8 +100,9 @@ export const Navbar = () => {
             _hover={{
               bg: "facebook.300",
             }}
+            onClick={handleSignOut}
           >
-            Sign Up
+            Sign Out
           </Button>
         </Stack>
       </Flex>
