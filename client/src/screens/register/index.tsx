@@ -14,8 +14,6 @@ import {
   Link,
   FormErrorMessage,
   useToast,
-  Center,
-  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -25,6 +23,7 @@ import * as Yup from "yup";
 import { LOGIN } from "../../routes";
 import { register } from "../../store/auth/authslice";
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
+import { Loader } from "../../components";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -97,12 +96,7 @@ export const Register = () => {
     },
   });
 
-  if (isLoading)
-    return (
-      <Center my="10" w="100%" h="100vh">
-        <Spinner />
-      </Center>
-    );
+  if (isLoading) return <Loader />;
 
   return (
     <Flex minH={"100vh"} align={"center"} justify={"center"} bg={bgColorFlex}>

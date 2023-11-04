@@ -17,7 +17,6 @@ import {
   Link,
   Center,
   FormErrorMessage,
-  Spinner,
 } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
@@ -27,6 +26,7 @@ import { DASHBOARD, REGISTER } from "../../routes";
 import { loginInputs } from "../../models";
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
 import { login } from "../../store/auth/authslice";
+import { Loader } from "../../components";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -67,12 +67,7 @@ export const Login = () => {
     },
   });
 
-  if (isLoading)
-    return (
-      <Center my="10" w="100%" h="100vh">
-        <Spinner />
-      </Center>
-    );
+  if (isLoading) return <Loader />;
 
   return (
     <Flex minH={"100vh"} align={"center"} justify={"center"} bg={bgColorFlex}>

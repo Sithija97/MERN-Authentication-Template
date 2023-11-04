@@ -1,7 +1,7 @@
 import axios from "axios";
 import { loginInputs, registerInputs } from "../../models";
 
-const BASE_URL = "api/users";
+const BASE_URL = "/api/users";
 
 const register = async (payload: registerInputs) => {
   const response = await axios.post(`${BASE_URL}/register`, payload);
