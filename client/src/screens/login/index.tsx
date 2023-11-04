@@ -17,6 +17,7 @@ import {
   Link,
   Center,
   FormErrorMessage,
+  useToast,
 } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
@@ -38,6 +39,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export const Login = () => {
+  const toast = useToast();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -52,6 +54,15 @@ export const Login = () => {
     if (response.meta.requestStatus === "fulfilled") {
       formik.resetForm();
       navigate(DASHBOARD);
+    }
+    if (response.meta.requestStatus === "rejected") {
+      toast({
+        title: response.payload,
+        status: "error",
+        isClosable: true,
+        position: "top-right",
+        duration: 5000,
+      });
     }
   };
 

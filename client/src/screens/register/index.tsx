@@ -80,6 +80,15 @@ export const Register = () => {
         formik.resetForm();
         navigate(LOGIN);
       }
+      if (response.meta.requestStatus === "rejected") {
+        toast({
+          title: response.payload,
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+          duration: 5000,
+        });
+      }
     }
   };
 
