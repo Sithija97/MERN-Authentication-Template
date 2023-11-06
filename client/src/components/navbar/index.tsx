@@ -20,8 +20,8 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
-import { LOGIN } from "../../routes";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { DASHBOARD, LOGIN, PROFILE } from "../../routes";
 import { useAppDispatch } from "../../store/store";
 import { logout } from "../../store/auth/authslice";
 
@@ -80,17 +80,22 @@ export const Navbar = () => {
           flex={{ base: 1, md: 0 }}
           justify={"flex-end"}
           direction={"row"}
-          spacing={6}
+          spacing={2}
         >
-          {/* <Button
-            as={RouterLink}
-            to={LOGIN}
+          <Button
+            display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
+            fontWeight={600}
+            color={"facebook.400"}
+            bg={"facebook.100"}
+            _hover={{
+              bg: "facebook.50",
+            }}
+            as={RouterLink}
+            to={PROFILE}
           >
-            Sign In
-          </Button> */}
+            Profile
+          </Button>
           <Button
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
@@ -126,9 +131,9 @@ const DesktopNav = () => {
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Box
-                as="a"
+                as={RouterLink}
                 p={2}
-                href={navItem.href ?? "#"}
+                to={navItem.href ?? "#"}
                 fontSize={"sm"}
                 fontWeight={500}
                 color={linkColor}
@@ -223,8 +228,8 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
     <Stack spacing={4} onClick={children && onToggle}>
       <Box
         py={2}
-        as="a"
-        href={href ?? "#"}
+        as={RouterLink}
+        to={href ?? "#"}
         justifyContent="space-between"
         alignItems="center"
         _hover={{
@@ -309,10 +314,10 @@ const NAV_ITEMS: Array<NavItem> = [
   // },
   {
     label: "Home",
-    href: "#",
+    href: DASHBOARD,
   },
-  {
-    label: "About",
-    href: "#",
-  },
+  // {
+  //   label: "About",
+  //   href: "#",
+  // },
 ];

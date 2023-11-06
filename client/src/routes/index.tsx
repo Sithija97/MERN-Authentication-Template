@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Layout, Login, Register } from "../screens";
+import { Dashboard, Layout, Login, Profile, Register } from "../screens";
 
 export const ROOT = "/";
 export const LOGIN = "/login";
@@ -7,6 +7,7 @@ export const REGISTER = "/register";
 
 export const PROTECTED = "/protected";
 export const DASHBOARD = "/protected/dashboard";
+export const PROFILE = "/protected/profile";
 
 export const router = createBrowserRouter([
   { path: ROOT, element: <Login /> },
@@ -18,7 +19,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: DASHBOARD,
-        element: "Dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: PROFILE,
+        element: <Profile />,
       },
     ],
   },
