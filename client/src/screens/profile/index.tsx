@@ -61,12 +61,12 @@ export const Profile = () => {
             type="text"
           />
         </FormControl>
-        <FormControl id="email" isRequired>
-          <FormLabel>Email address</FormLabel>
+        <FormControl id="password" isRequired>
+          <FormLabel>Old Password</FormLabel>
           <Input
-            placeholder="your-email@example.com"
+            placeholder="old password"
             _placeholder={{ color: "gray.500" }}
-            type="email"
+            type="password"
           />
         </FormControl>
         <FormControl id="password" isRequired>
@@ -86,7 +86,7 @@ export const Profile = () => {
               bg: "red.500",
             }}
           >
-            Cancel
+            Change Password
           </Button>
           <Button
             bg={"blue.400"}
@@ -96,7 +96,7 @@ export const Profile = () => {
               bg: "blue.500",
             }}
           >
-            Submit
+            Update Profile
           </Button>
         </Stack>
       </Stack>

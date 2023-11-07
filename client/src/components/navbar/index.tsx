@@ -21,7 +21,7 @@ import {
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { DASHBOARD, LOGIN, PROFILE } from "../../routes";
+import { LOGIN, PROFILE } from "../../routes";
 import { useAppDispatch } from "../../store/store";
 import { logout } from "../../store/auth/authslice";
 
@@ -86,7 +86,6 @@ export const Navbar = () => {
             display={{ base: "none", md: "inline-flex" }}
             fontSize={"sm"}
             fontWeight={600}
-            color={"facebook.400"}
             bg={"facebook.100"}
             _hover={{
               bg: "facebook.50",
@@ -314,7 +313,7 @@ const NAV_ITEMS: Array<NavItem> = [
   // },
   {
     label: "Home",
-    href: DASHBOARD,
+    href: "/protected/dashboard",
   },
   // {
   //   label: "About",
