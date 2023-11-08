@@ -56,7 +56,7 @@ export const Profile = () => {
         <FormControl id="userName" isRequired>
           <FormLabel>User name</FormLabel>
           <Input
-            placeholder="UserName"
+            placeholder="user name"
             _placeholder={{ color: "gray.500" }}
             type="text"
           />

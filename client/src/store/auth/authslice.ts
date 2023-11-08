@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../../services/auth";
-import { loginInputs, registerInputs } from "../../models";
+import {
+  changePasswordInputs,
+  loginInputs,
+  registerInputs,
+  userUpdateInputs,
+} from "../../models";
 
 const initialState = {
   user: null,
@@ -29,6 +34,32 @@ export const login = createAsyncThunk(
   async (payload: loginInputs, thunkAPI) => {
     try {
       const response = await authService.login(payload);
+      return response.data;
+    } catch (error: any) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const updateUser = createAsyncThunk(
+  "auth/update-user",
+  async (payload: userUpdateInputs, thunkAPI) => {
+    try {
+      const response = await authService.update(payload);
+      return response.data;
+    } catch (error: any) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  "auth/update-user",
+  async (payload: changePasswordInputs, thunkAPI) => {
+    try {
+      const response = await authService.changePassword(payload);
       return response.data;
     } catch (error: any) {
       const message = error.response.data.message;
@@ -73,6 +104,19 @@ const authSlice = createSlice({
         state.user = payload;
       })
       .addCase(login.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = payload as string;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = payload;
+      })
+      .addCase(updateUser.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
         state.message = payload as string;

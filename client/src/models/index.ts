@@ -5,3 +5,13 @@ export type registerInputs = {
 };
 
 export type loginInputs = { email: string; password: string };
+
+export type userUpdateInputs = {
+  username?: string;
+  photo?: string;
+};
+
+export type changePasswordInputs = {
+  oldPassword: string;
+  password: string;
+};

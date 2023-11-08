@@ -1,5 +1,10 @@
 import axios from "axios";
-import { loginInputs, registerInputs } from "../../models";
+import {
+  loginInputs,
+  registerInputs,
+  userUpdateInputs,
+  changePasswordInputs,
+} from "../../models";
 
 const BASE_URL = "/api/users";
 
@@ -13,9 +18,21 @@ const login = async (payload: loginInputs) => {
   return response;
 };
 
+const update = async (payload: userUpdateInputs) => {
+  const response = await axios.post(`${BASE_URL}/updateuser`, payload);
+  return response;
+};
+
+const changePassword = async (payload: changePasswordInputs) => {
+  const response = await axios.post(`${BASE_URL}/changepassword`, payload);
+  return response;
+};
+
 const authService = {
   register,
   login,
+  update,
+  changePassword,
 };
 
 export default authService;
