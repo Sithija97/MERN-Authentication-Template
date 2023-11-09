@@ -3,12 +3,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../../services/auth";
 import {
   changePasswordInputs,
+  initialAuthState,
   loginInputs,
   registerInputs,
   userUpdateInputs,
 } from "../../models";
 
-const initialState = {
+const initialState: initialAuthState = {
   user: null,
   isError: false,
   isSuccess: false,

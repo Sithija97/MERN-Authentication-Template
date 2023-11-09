@@ -19,12 +19,12 @@ const login = async (payload: loginInputs) => {
 };
 
 const update = async (payload: userUpdateInputs) => {
-  const response = await axios.post(`${BASE_URL}/updateuser`, payload);
+  const response = await axios.patch(`${BASE_URL}/updateuser`, payload);
   return response;
 };
 
 const changePassword = async (payload: changePasswordInputs) => {
-  const response = await axios.post(`${BASE_URL}/changepassword`, payload);
+  const response = await axios.patch(`${BASE_URL}/changepassword`, payload);
   return response;
 };
 

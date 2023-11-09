@@ -150,7 +150,7 @@ const changePassword = asyncHandler(
     if (user && passwordIsCorrect) {
       user.password = password;
       await user.save();
-      res.status(200).send({ message: "Password changed successfully" });
+      res.status(200).json({ message: "Password changed successfully" });
     } else {
       res.status(400);
       throw new Error("Old password is incorrect");

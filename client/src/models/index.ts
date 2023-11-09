@@ -15,3 +15,18 @@ export type changePasswordInputs = {
   oldPassword: string;
   password: string;
 };
+
+export type IUser = {
+  _id: string;
+  username: string;
+  email: string;
+  photo: string;
+};
+
+export type initialAuthState = {
+  user: IUser | null;
+  isError: boolean;
+  isSuccess: boolean;
+  isLoading: boolean;
+  message: string;
+};
