@@ -11,7 +11,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   useColorModeValue,
-  useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import {
@@ -19,6 +18,7 @@ import {
   CloseIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  AtSignIcon,
 } from "@chakra-ui/icons";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { LOGIN, PROFILE } from "../../routes";
@@ -63,13 +63,7 @@ export const Navbar = () => {
           />
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
-          <Text
-            textAlign={useBreakpointValue({ base: "center", md: "left" })}
-            fontFamily={"heading"}
-            color={useColorModeValue("gray.800", "white")}
-          >
-            Logo
-          </Text>
+          <Icon color={"facebook.600"} w={5} h={5} as={AtSignIcon} />
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <DesktopNav />

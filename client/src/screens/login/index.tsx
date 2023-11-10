@@ -15,11 +15,9 @@ import {
   InputGroup,
   InputRightElement,
   Link,
-  Center,
   FormErrorMessage,
   useToast,
 } from "@chakra-ui/react";
-import { FcGoogle } from "react-icons/fc";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -27,7 +25,7 @@ import { DASHBOARD, REGISTER } from "../../routes";
 import { loginInputs } from "../../models";
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
 import { login } from "../../store/auth/authslice";
-import { Loader } from "../../components";
+import { Loader, SignInWithGoogle } from "../../components";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -154,16 +152,7 @@ export const Login = () => {
                 >
                   Sign in
                 </Button>
-                <Button
-                  w={"full"}
-                  maxW={"md"}
-                  variant={"outline"}
-                  leftIcon={<FcGoogle />}
-                >
-                  <Center>
-                    <Text>Sign in with Google</Text>
-                  </Center>
-                </Button>
+                <SignInWithGoogle />
               </Stack>
 
               <Stack pt={6}>
