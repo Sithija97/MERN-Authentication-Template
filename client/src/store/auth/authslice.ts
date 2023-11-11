@@ -4,6 +4,7 @@ import {
   changePasswordInputs,
   initialAuthState,
   loginInputs,
+  loginWithGoogleInputs,
   registerInputs,
   userUpdateInputs,
 } from "../../models";
@@ -21,6 +22,19 @@ export const register = createAsyncThunk(
   async (payload: registerInputs, thunkAPI) => {
     try {
       const response = await authService.register(payload);
+      return response.data;
+    } catch (error: any) {
+      const message = error.response.data.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const loginWithGoogle = createAsyncThunk(
+  "auth/google-login",
+  async (payload: loginWithGoogleInputs, thunkAPI) => {
+    try {
+      const response = await authService.loginWithGoogle(payload);
       return response.data;
     } catch (error: any) {
       const message = error.response.data.message;
@@ -104,6 +118,19 @@ const authSlice = createSlice({
         state.user = payload;
       })
       .addCase(login.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = payload as string;
+      })
+      .addCase(loginWithGoogle.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = payload;
+      })
+      .addCase(loginWithGoogle.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
         state.message = payload as string;

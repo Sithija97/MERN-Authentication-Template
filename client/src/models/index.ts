@@ -6,6 +6,13 @@ export type registerInputs = {
 
 export type loginInputs = { email: string; password: string };
 
+export type loginWithGoogleInputs = {
+  username: string;
+  email: string;
+  photo: string;
+  authMethod: string;
+};
+
 export type userUpdateInputs = {
   username?: string;
   photo?: string;
@@ -21,6 +28,7 @@ export type IUser = {
   username: string;
   email: string;
   photo: string;
+  authMethod: string;
 };
 
 export type initialAuthState = {

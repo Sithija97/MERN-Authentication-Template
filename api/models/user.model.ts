@@ -20,13 +20,18 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, "Please add a password"],
+      required: [false, "Please add a password"],
       minLength: [6, "Password must be up to 6 characters"],
     },
     photo: {
       type: String,
       required: [true, "Please add a photo"],
-      default: "https://i.ibb.co/4pDNDk1/avatar.png",
+      default: "",
+    },
+    authMethod: {
+      type: String,
+      required: true,
+      default: "email",
     },
   },
   {

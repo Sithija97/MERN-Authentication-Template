@@ -11,15 +11,17 @@ import {
   Center,
   FormErrorMessage,
   useToast,
+  AvatarBadge,
+  IconButton,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
-// import { useNavigate } from "react-router-dom";
 import { Loader } from "../../components";
 import { useNavigate } from "react-router-dom";
 import { changePassword, updateUser } from "../../store/auth/authslice";
 import { LOGIN } from "../../routes";
+import { Auth_Method } from "../../components/enums";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string(),
@@ -65,13 +67,33 @@ export const Profile = () => {
 
   const handleProfileUpdate = async () => {
     const { username } = formik.values;
-    await dispatch(updateUser({ username }));
+    const response = await dispatch(updateUser({ username }));
+
+    if (response.meta.requestStatus === "fulfilled") {
+      toast({
+        title: "Profile updated successcully!",
+        status: "success",
+        isClosable: true,
+        position: "top-right",
+        duration: 5000,
+      });
+    }
+
+    if (response.meta.requestStatus === "rejected") {
+      toast({
+        title: response.payload,
+        status: "error",
+        isClosable: true,
+        position: "top-right",
+        duration: 5000,
+      });
+    }
   };
 
   const formik = useFormik({
     initialValues: {
       username: user?.username || "",
-      photo: "https://i.ibb.co/4pDNDk1/avatar.png",
+      photo: user?.photo || "",
       password: "",
       oldPassword: "",
     },
@@ -100,16 +122,21 @@ export const Profile = () => {
           <FormLabel>User Icon</FormLabel>
           <Stack direction={["column", "row"]} spacing={6}>
             <Center>
-              <Avatar size="xl" src={formik.values.photo}>
-                {/* <AvatarBadge
+              <Avatar
+                size="xl"
+                name={formik.values.username}
+                src={formik.values.photo}
+              >
+                <AvatarBadge
                   as={IconButton}
                   size="sm"
                   rounded="full"
                   top="-10px"
-                  colorScheme="red"
+                  colorScheme="green"
+                  color={"green.200"}
                   aria-label="remove Image"
-                  icon={<SmallCloseIcon />}
-                /> */}
+                  // icon={<SmallCloseIcon />}
+                />
               </Avatar>
             </Center>
             <Center w="full">
@@ -132,56 +159,62 @@ export const Profile = () => {
           />
           <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
         </FormControl>
-        <FormControl
-          id="oldPassword"
-          isInvalid={formik.errors.oldPassword ? true : false}
-        >
-          <FormLabel>Old Password</FormLabel>
-          <Input
-            name="oldPassword"
-            placeholder="old password"
-            _placeholder={{ color: "gray.500" }}
-            type="password"
-            onChange={formik.handleChange}
-            value={formik.values.oldPassword}
-          />
-          <FormErrorMessage>{formik.errors.oldPassword}</FormErrorMessage>
-        </FormControl>
-        <FormControl
-          id="password"
-          isInvalid={formik.errors.password ? true : false}
-        >
-          <FormLabel>Password</FormLabel>
-          <Input
-            name="password"
-            placeholder="password"
-            _placeholder={{ color: "gray.500" }}
-            type="password"
-            onChange={formik.handleChange}
-            value={formik.values.password}
-          />
-          <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-        </FormControl>
+        {user?.authMethod === Auth_Method.EMAIL && (
+          <>
+            <FormControl
+              id="oldPassword"
+              isInvalid={formik.errors.oldPassword ? true : false}
+            >
+              <FormLabel>Old Password</FormLabel>
+              <Input
+                name="oldPassword"
+                placeholder="old password"
+                _placeholder={{ color: "gray.500" }}
+                type="password"
+                onChange={formik.handleChange}
+                value={formik.values.oldPassword}
+              />
+              <FormErrorMessage>{formik.errors.oldPassword}</FormErrorMessage>
+            </FormControl>
+            <FormControl
+              id="password"
+              isInvalid={formik.errors.password ? true : false}
+            >
+              <FormLabel>Password</FormLabel>
+              <Input
+                name="password"
+                placeholder="password"
+                _placeholder={{ color: "gray.500" }}
+                type="password"
+                onChange={formik.handleChange}
+                value={formik.values.password}
+              />
+              <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+            </FormControl>
+          </>
+        )}
         <Stack spacing={6} direction={["column", "row"]}>
+          {user?.authMethod === Auth_Method.EMAIL && (
+            <Button
+              bg={"red.400"}
+              color={"white"}
+              w="full"
+              _hover={{
+                bg: "red.500",
+              }}
+              onClick={() => {
+                handlePasswordChange();
+              }}
+            >
+              Change Password
+            </Button>
+          )}
           <Button
-            bg={"red.400"}
+            bg={"facebook.400"}
             color={"white"}
             w="full"
             _hover={{
-              bg: "red.500",
-            }}
-            onClick={() => {
-              handlePasswordChange();
-            }}
-          >
-            Change Password
-          </Button>
-          <Button
-            bg={"blue.400"}
-            color={"white"}
-            w="full"
-            _hover={{
-              bg: "blue.500",
+              bg: "facebook.500",
             }}
             onClick={() => {
               handleProfileUpdate();

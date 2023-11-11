@@ -24,7 +24,11 @@ import * as Yup from "yup";
 import { DASHBOARD, REGISTER } from "../../routes";
 import { loginInputs } from "../../models";
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
-import { login } from "../../store/auth/authslice";
+import { login, loginWithGoogle } from "../../store/auth/authslice";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../config/firebase";
+import { loginWithGoogleInputs } from "../../models";
+import { Auth_Method } from "../../components/enums";
 import { Loader, SignInWithGoogle } from "../../components";
 
 const validationSchema = Yup.object().shape({
@@ -61,6 +65,39 @@ export const Login = () => {
         position: "top-right",
         duration: 5000,
       });
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const { displayName, email, photoURL } = result.user;
+
+      const userObj: loginWithGoogleInputs = {
+        username: displayName!,
+        email: email!,
+        photo: photoURL!,
+        authMethod: Auth_Method.GOOGLE,
+      };
+
+      const response = await dispatch(loginWithGoogle(userObj));
+
+      if (response.meta.requestStatus === "fulfilled") {
+        navigate(DASHBOARD);
+      }
+
+      if (response.meta.requestStatus === "rejected") {
+        toast({
+          title: response.payload,
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+          duration: 5000,
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -152,7 +189,9 @@ export const Login = () => {
                 >
                   Sign in
                 </Button>
-                <SignInWithGoogle />
+                <SignInWithGoogle
+                  handleSignInWithGoogle={handleSignInWithGoogle}
+                />
               </Stack>
 
               <Stack pt={6}>

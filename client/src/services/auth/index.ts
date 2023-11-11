@@ -4,6 +4,7 @@ import {
   registerInputs,
   userUpdateInputs,
   changePasswordInputs,
+  loginWithGoogleInputs,
 } from "../../models";
 
 const BASE_URL = "/api/users";
@@ -15,6 +16,11 @@ const register = async (payload: registerInputs) => {
 
 const login = async (payload: loginInputs) => {
   const response = await axios.post(`${BASE_URL}/login`, payload);
+  return response;
+};
+
+const loginWithGoogle = async (payload: loginWithGoogleInputs) => {
+  const response = await axios.post(`${BASE_URL}/google-login`, payload);
   return response;
 };
 
@@ -31,6 +37,7 @@ const changePassword = async (payload: changePasswordInputs) => {
 const authService = {
   register,
   login,
+  loginWithGoogle,
   update,
   changePassword,
 };

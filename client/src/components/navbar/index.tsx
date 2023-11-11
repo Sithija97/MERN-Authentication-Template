@@ -12,6 +12,7 @@ import {
   PopoverContent,
   useColorModeValue,
   useDisclosure,
+  Avatar,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -22,13 +23,15 @@ import {
 } from "@chakra-ui/icons";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { LOGIN, PROFILE } from "../../routes";
-import { useAppDispatch } from "../../store/store";
+import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
 import { logout } from "../../store/auth/authslice";
 
 export const Navbar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isOpen, onToggle } = useDisclosure();
+
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const handleSignOut = () => {
     dispatch(logout());
@@ -62,7 +65,11 @@ export const Navbar = () => {
             aria-label={"Toggle Navigation"}
           />
         </Flex>
-        <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
+        <Flex
+          flex={{ base: 1 }}
+          justify={{ base: "center", md: "start" }}
+          align={"center"}
+        >
           <Icon color={"facebook.600"} w={5} h={5} as={AtSignIcon} />
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
@@ -73,6 +80,7 @@ export const Navbar = () => {
         <Stack
           flex={{ base: 1, md: 0 }}
           justify={"flex-end"}
+          align={"center"}
           direction={"row"}
           spacing={2}
         >
@@ -102,6 +110,7 @@ export const Navbar = () => {
           >
             Sign Out
           </Button>
+          <Avatar size="sm" name={user?.username} src={user?.photo} />
         </Stack>
       </Flex>
 
