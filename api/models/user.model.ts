@@ -25,7 +25,7 @@ const userSchema = new Schema<IUser>(
     },
     photo: {
       type: String,
-      required: [true, "Please add a photo"],
+      required: [false, "Please add a photo"],
       default: "",
     },
     authMethod: {

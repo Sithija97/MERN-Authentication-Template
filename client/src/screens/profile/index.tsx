@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { changePassword, updateUser } from "../../store/auth/authslice";
 import { LOGIN } from "../../routes";
 import { Auth_Method } from "../../components/enums";
+import { useRef, useState } from "react";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string(),
@@ -35,6 +36,9 @@ export const Profile = () => {
   const navigate = useNavigate();
 
   const { user, isLoading } = useAppSelector((state: RootState) => state.auth);
+
+  const [image, setImage] = useState<File | undefined>(undefined);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const bgColorFlex = useColorModeValue("gray.50", "gray.800");
   const bgColorBox = useColorModeValue("white", "gray.700");
@@ -90,6 +94,10 @@ export const Profile = () => {
     }
   };
 
+  const handleImageUpload = async () => {
+    console.log(image);
+  };
+
   const formik = useFormik({
     initialValues: {
       username: user?.username || "",
@@ -126,6 +134,8 @@ export const Profile = () => {
                 size="xl"
                 name={formik.values.username}
                 src={formik.values.photo}
+                cursor="pointer"
+                onClick={() => inputRef?.current?.click()}
               >
                 <AvatarBadge
                   as={IconButton}
@@ -135,12 +145,22 @@ export const Profile = () => {
                   colorScheme="green"
                   color={"green.200"}
                   aria-label="remove Image"
-                  // icon={<SmallCloseIcon />}
                 />
               </Avatar>
+              <input
+                type="file"
+                ref={inputRef}
+                hidden
+                accept="image/*"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setImage(e.target?.files?.[0])
+                }
+              />
             </Center>
             <Center w="full">
-              <Button w="full">Change Icon</Button>
+              <Button w="full" onClick={handleImageUpload}>
+                Change Icon
+              </Button>
             </Center>
           </Stack>
         </FormControl>
