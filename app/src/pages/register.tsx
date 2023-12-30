@@ -2,7 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { LOGIN } from "../routes";
-import { TextInput } from "../components";
+import { Button, TextInput } from "../components";
+import { registerInputData } from "../models";
+import { RootState, useAppDispatch, useAppSelector } from "../store/store";
+import { register } from "../store/auth/authslice";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -18,14 +21,30 @@ const validationSchema = Yup.object().shape({
 });
 
 export const Register = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const { isLoading } = useAppSelector((state: RootState) => state.auth);
 
   const redirectToLogin = () => {
     navigate(LOGIN);
   };
 
-  const handleRegister = (values: { email: string; password: string }) => {
-    console.log(values);
+  const handleRegister = async (values: registerInputData) => {
+    const { username, email, password, confirmPassword } = values;
+    if (password !== confirmPassword) {
+      alert("Error : Passwords don't match, please check again.");
+    } else {
+      const response = await dispatch(register({ username, email, password }));
+      if (response.meta.requestStatus === "fulfilled") {
+        alert("Success : User created Successfully");
+        formik.resetForm();
+        redirectToLogin();
+      }
+      if (response.meta.requestStatus === "rejected") {
+        alert(`Error : ${response.payload}`);
+      }
+    }
   };
 
   const formik = useFormik({
@@ -43,7 +62,10 @@ export const Register = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-50">
-      <div className="flex flex-col justify-center min-w-lg p-6 items-start shrink-0 gap-6 bg-white rounded-xl shadow-lg">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="flex flex-col justify-center min-w-lg p-6 items-start shrink-0 gap-6 bg-white rounded-xl shadow-lg"
+      >
         <div className="flex flex-col justify-center items-start self-stretch">
           <div className="flex items-center gap-2">
             <svg
@@ -73,7 +95,7 @@ export const Register = () => {
           </p>
         </div>
 
-        <div className="">
+        <div>
           <TextInput
             labelText="Username"
             id="username"
@@ -128,7 +150,7 @@ export const Register = () => {
               labelText="Confirm Password"
               id="confirmPassword"
               name="confirmPassword"
-              type="confirmPassword"
+              type="password"
               placeholder="Confirm Password"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -143,9 +165,7 @@ export const Register = () => {
           </div>
         </div>
 
-        <button className="w-full px-1.5 py-2 bg-blue-700 rounded-lg text-white">
-          <p className="font-semibold">Sign Up</p>
-        </button>
+        <Button title="Sign Up" type="submit" loading={isLoading} />
 
         <div className="flex -mt-2 mb-1 m-auto">
           <p className="leading-none text-base font-medium text-gray-500">
@@ -158,7 +178,7 @@ export const Register = () => {
             </span>
           </p>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

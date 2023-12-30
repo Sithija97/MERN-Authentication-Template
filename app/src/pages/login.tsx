@@ -1,8 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { REGISTER } from "../routes";
-import { TextInput } from "../components";
+import { HOME, REGISTER } from "../routes";
+import { Button, SignInWithGoogle, TextInput } from "../components";
+import { loginInputs, loginWithGoogleInputs } from "../models";
+import { RootState, useAppDispatch, useAppSelector } from "../store/store";
+import { login, loginWithGoogle } from "../store/auth/authslice";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../config/firebase";
+import { Auth_Method } from "../enums";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -14,14 +20,50 @@ const validationSchema = Yup.object().shape({
 });
 
 export const Login = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const { isLoading } = useAppSelector((state: RootState) => state.auth);
 
   const redirectToRegister = () => {
     navigate(REGISTER);
   };
 
-  const handleLogin = (values: { email: string; password: string }) => {
-    console.log(values);
+  const handleLogin = async (values: loginInputs) => {
+    const response = await dispatch(login(values));
+    if (response.meta.requestStatus === "fulfilled") {
+      formik.resetForm();
+      navigate(HOME);
+    }
+    if (response.meta.requestStatus === "rejected") {
+      alert(`Error : ${response.payload}`);
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const { displayName, email, photoURL } = result.user;
+
+      const userObj: loginWithGoogleInputs = {
+        username: displayName!,
+        email: email!,
+        photo: photoURL!,
+        authMethod: Auth_Method.GOOGLE,
+      };
+
+      const response = await dispatch(loginWithGoogle(userObj));
+
+      if (response.meta.requestStatus === "fulfilled") {
+        navigate(HOME);
+      }
+      if (response.meta.requestStatus === "rejected") {
+        alert(`Error : ${response.payload}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const formik = useFormik({
@@ -37,7 +79,10 @@ export const Login = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-50">
-      <div className="flex flex-col justify-center min-w-lg p-6 items-start shrink-0 gap-6 bg-white rounded-xl shadow-lg">
+      <form
+        onSubmit={formik.handleSubmit}
+        className="flex flex-col justify-center min-w-lg p-6 items-start shrink-0 gap-6 bg-white rounded-xl shadow-lg"
+      >
         <div className="flex flex-col justify-center items-start self-stretch">
           <div className="flex items-center gap-2">
             <svg
@@ -110,23 +155,13 @@ export const Login = () => {
           </p>
         </div>
 
-        <button className="w-full px-1.5 py-2 bg-blue-700 rounded-lg text-white">
-          <p className="font-semibold">Sign In</p>
-        </button>
+        <Button title="Sign In" type="submit" loading={isLoading} />
 
         <div className="m-auto">
           <p className="leading-none text-base font-medium text-gray-500">or</p>
         </div>
 
-        <button className="flex items-center justify-center gap-2 w-full px-1.5 py-2 bg-white text-gray-900 rounded-lg border border-gray-200">
-          <img
-            className="w-6 h-6"
-            src="https://www.svgrepo.com/show/475656/google-color.svg"
-            loading="lazy"
-            alt="google logo"
-          />
-          <p className="font-semibold">Sign in with Google </p>
-        </button>
+        <SignInWithGoogle onClick={handleSignInWithGoogle} />
 
         <div className="flex -mt-2 mb-1 m-auto">
           <p className="leading-none text-base font-medium text-gray-500">
@@ -139,7 +174,7 @@ export const Login = () => {
             </span>
           </p>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
