@@ -1,6 +1,12 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Avatar, TextInput } from "../components";
+import { Avatar, Button, TextInput } from "../components";
+import { RootState, useAppDispatch, useAppSelector } from "../store/store";
+import { changePassword, updateUser } from "../store/auth/authslice";
+import { useNavigate } from "react-router-dom";
+import { LOGIN } from "../routes";
+import { Auth_Method } from "../enums";
+import { useRef, useState } from "react";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -13,9 +19,50 @@ const validationSchema = Yup.object().shape({
 });
 
 export const Profile = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const { user, changePasswordLoading, updateUserLoading } = useAppSelector(
+    (state: RootState) => state.auth
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [image, setImage] = useState<File | undefined>(undefined);
+
+  const handlePasswordChange = async () => {
+    const { oldPassword, password } = formik.values;
+    const response = await dispatch(changePassword({ oldPassword, password }));
+
+    if (response.meta.requestStatus === "fulfilled") {
+      formik.resetForm();
+      navigate(LOGIN);
+      alert(response.payload.message);
+    }
+    if (response.meta.requestStatus === "rejected") {
+      alert(`Error: ${response.payload}`);
+    }
+  };
+
+  const handleProfileUpdate = async () => {
+    const { username } = formik.values;
+    const response = await dispatch(updateUser({ username }));
+
+    if (response.meta.requestStatus === "fulfilled") {
+      alert("Profile updated successcully!");
+    }
+    if (response.meta.requestStatus === "rejected") {
+      alert(`Error: ${response.payload}`);
+    }
+  };
+
+  // const handleImageUpload = async () => {
+  //   console.log(image);
+  // };
+
   const formik = useFormik({
     initialValues: {
-      username: "",
+      username: user?.username || "",
       oldPassword: "",
       password: "",
     },
@@ -41,7 +88,21 @@ export const Profile = () => {
       </div>
 
       <div>
-        <Avatar name={"Sithija Shehara"} styles="w-20 h-20" />
+        <Avatar
+          name={user?.username}
+          styles="w-20 h-20"
+          imgUrl={user?.photo}
+          onClick={() => inputRef?.current?.click()}
+        />
+        <input
+          type="file"
+          ref={inputRef}
+          hidden
+          accept="image/*"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setImage(e.target?.files?.[0])
+          }
+        />
       </div>
 
       <div className="">
@@ -61,66 +122,62 @@ export const Profile = () => {
           }
           styles="w-96"
         />
-        <TextInput
-          labelText="Username"
-          id="username"
-          name="username"
-          type="username"
-          placeholder="Username"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.username}
-          error={
-            formik.touched.username && formik.errors.username
-              ? formik.errors.username
-              : undefined
-          }
-          styles="w-96"
-        />
 
-        <div className="grid grid-cols-2 gap-2">
-          <TextInput
-            labelText="Old Password"
-            id="oldPassword"
-            name="oldPassword"
-            type="oldPassword"
-            placeholder="Old Password"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.oldPassword}
-            error={
-              formik.touched.oldPassword && formik.errors.oldPassword
-                ? formik.errors.oldPassword
-                : undefined
-            }
-            styles="w-[188px]"
-          />
-          <TextInput
-            labelText="Password"
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Password"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.password}
-            error={
-              formik.touched.password && formik.errors.password
-                ? formik.errors.password
-                : undefined
-            }
-            styles="w-[188px]"
-          />
-        </div>
+        {user?.authMethod === Auth_Method.EMAIL && (
+          <>
+            <TextInput
+              labelText="Old Password"
+              id="oldPassword"
+              name="oldPassword"
+              type="password"
+              placeholder="Old Password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.oldPassword}
+              error={
+                formik.touched.oldPassword && formik.errors.oldPassword
+                  ? formik.errors.oldPassword
+                  : undefined
+              }
+              styles="w-96"
+            />
+            <TextInput
+              labelText="Password"
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+              error={
+                formik.touched.password && formik.errors.password
+                  ? formik.errors.password
+                  : undefined
+              }
+              styles="w-96"
+            />
+          </>
+        )}
       </div>
 
       <div className="w-full flex flex-row items-center gap-3 -mt-4">
-        <button className="w-full px-1.5 py-2 bg-blue-700 rounded-lg text-white">
-          <p className="font-semibold">Sign In</p>
-        </button>
-        <button className="w-full px-1.5 py-2 bg-blue-700 rounded-lg text-white">
-          <p className="font-semibold">Sign In</p>
-        </button>
+        {user?.authMethod === Auth_Method.EMAIL && (
+          <Button
+            title="Change Password"
+            type="button"
+            styles="bg-red-500"
+            loading={changePasswordLoading}
+            onClick={handlePasswordChange}
+          />
+        )}
+        <Button
+          title="Change Profile"
+          type="button"
+          styles="bg-blue-700"
+          loading={updateUserLoading}
+          onClick={handleProfileUpdate}
+        />
       </div>
     </div>
   );

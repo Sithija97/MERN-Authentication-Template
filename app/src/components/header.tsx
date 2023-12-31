@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../store/store";
+import { RootState, useAppDispatch, useAppSelector } from "../store/store";
 import { HOME, LOGIN, PROFILE } from "../routes";
 import { logout } from "../store/auth/authslice";
 import { Avatar } from "./avatar";
@@ -7,6 +7,9 @@ import { Avatar } from "./avatar";
 export const Header = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const { user } = useAppSelector((state: RootState) => state.auth);
+
   const redirectToProfile = () => {
     navigate(PROFILE);
   };
@@ -40,7 +43,8 @@ export const Header = () => {
             Sign Out
           </button>
           <Avatar
-            name="Sithija Shehara"
+            name={user?.username}
+            imgUrl={user?.photo}
             styles="h-10 w-10"
             onClick={redirectToProfile}
           />

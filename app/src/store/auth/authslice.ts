@@ -15,6 +15,8 @@ const initialState: initialAuthState = {
   isError: false,
   isSuccess: false,
   isLoading: false,
+  updateUserLoading: false,
+  changePasswordLoading: false,
   message: "",
 };
 
@@ -71,7 +73,7 @@ export const updateUser = createAsyncThunk(
 );
 
 export const changePassword = createAsyncThunk(
-  "auth/update-user",
+  "auth/change-password",
   async (payload: changePasswordInputs, thunkAPI) => {
     try {
       const response = await authService.changePassword(payload);
@@ -137,15 +139,28 @@ const authSlice = createSlice({
         state.message = payload as string;
       })
       .addCase(updateUser.pending, (state) => {
-        state.isLoading = true;
+        state.updateUserLoading = true;
       })
       .addCase(updateUser.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
+        state.updateUserLoading = false;
         state.isSuccess = true;
         state.user = payload;
       })
       .addCase(updateUser.rejected, (state, { payload }) => {
-        state.isLoading = false;
+        state.updateUserLoading = false;
+        state.isError = true;
+        state.message = payload as string;
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.changePasswordLoading = true;
+      })
+      .addCase(changePassword.fulfilled, (state, { payload }) => {
+        state.changePasswordLoading = false;
+        state.isSuccess = true;
+        state.user = payload;
+      })
+      .addCase(changePassword.rejected, (state, { payload }) => {
+        state.changePasswordLoading = false;
         state.isError = true;
         state.message = payload as string;
       });

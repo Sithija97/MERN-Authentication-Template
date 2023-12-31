@@ -43,5 +43,7 @@ export type initialAuthState = {
   isError: boolean;
   isSuccess: boolean;
   isLoading: boolean;
+  updateUserLoading: boolean;
+  changePasswordLoading: boolean;
   message: string;
 };
