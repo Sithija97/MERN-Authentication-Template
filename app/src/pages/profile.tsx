@@ -86,7 +86,7 @@ export const Profile = () => {
         // Now we can use this downloadURL as needed (e.g., save it to state or database)
         return downloadURL;
       } catch (error) {
-        console.error("Error uploading file:", error);
+        alert(`Error uploading file: ${error}`);
         return null;
       }
     }
@@ -129,9 +129,6 @@ export const Profile = () => {
           ref={inputRef}
           hidden
           accept="image/*"
-          // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          //   setImage(e.target?.files?.[0])
-          // }
           onChange={handleProfilePictureUpload}
         />
       </div>
