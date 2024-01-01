@@ -2,11 +2,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Avatar, Button, TextInput } from "../components";
 import { RootState, useAppDispatch, useAppSelector } from "../store/store";
-import { changePassword, updateUser } from "../store/auth/authslice";
+import {
+  changePassword,
+  updateProfilePicture,
+  updateUser,
+} from "../store/auth/authslice";
 import { useNavigate } from "react-router-dom";
 import { LOGIN } from "../routes";
 import { Auth_Method } from "../enums";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { storage } from "../config/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string().required("Username is required"),
@@ -26,9 +32,6 @@ export const Profile = () => {
   const { user, changePasswordLoading, updateUserLoading } = useAppSelector(
     (state: RootState) => state.auth
   );
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [image, setImage] = useState<File | undefined>(undefined);
 
   const handlePasswordChange = async () => {
     const { oldPassword, password } = formik.values;
@@ -56,9 +59,38 @@ export const Profile = () => {
     }
   };
 
-  // const handleImageUpload = async () => {
-  //   console.log(image);
-  // };
+  const handleProfilePictureUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const selectedFile = event.target?.files?.[0];
+    if (selectedFile && user?.authMethod === Auth_Method.EMAIL) {
+      const storageRef = ref(storage, "images/" + selectedFile.name);
+      try {
+        // Upload the image file
+        await uploadBytes(storageRef, selectedFile);
+
+        // Get the download URL of the uploaded image
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log("File uploaded:", downloadURL);
+        dispatch(updateProfilePicture(downloadURL));
+
+        const response = await dispatch(updateUser({ photo: downloadURL }));
+
+        if (response.meta.requestStatus === "fulfilled") {
+          alert("Profile updated successcully!");
+        }
+        if (response.meta.requestStatus === "rejected") {
+          alert(`Error: ${response.payload}`);
+        }
+
+        // Now we can use this downloadURL as needed (e.g., save it to state or database)
+        return downloadURL;
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        return null;
+      }
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -67,9 +99,7 @@ export const Profile = () => {
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: () => {
-      // handleLogin(values);
-    },
+    onSubmit: () => {},
   });
   return (
     <div className="flex flex-col justify-center min-w-lg p-6 items-start shrink-0 gap-6 bg-white rounded-xl shadow-lg">
@@ -99,9 +129,10 @@ export const Profile = () => {
           ref={inputRef}
           hidden
           accept="image/*"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setImage(e.target?.files?.[0])
-          }
+          // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          //   setImage(e.target?.files?.[0])
+          // }
+          onChange={handleProfilePictureUpload}
         />
       </div>
 

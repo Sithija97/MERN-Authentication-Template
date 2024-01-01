@@ -96,6 +96,11 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.message = "";
     },
+    updateProfilePicture: (state, { payload }) => {
+      if (state?.user) {
+        state.user.photo = payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -167,6 +172,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, updateProfilePicture } = authSlice.actions;
 
 export default authSlice.reducer;

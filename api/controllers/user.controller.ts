@@ -136,10 +136,11 @@ const updateUser = asyncHandler(async (req: CustomRequest, res: Response) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { username, email, photo } = user;
+    const { username, email, photo, authMethod } = user;
     user.email = email;
     user.username = req.body.username || username;
     user.photo = req.body.photo || photo;
+    user.authMethod = authMethod;
 
     const updatedUser = await user.save();
     res.status(200).json({
@@ -147,6 +148,7 @@ const updateUser = asyncHandler(async (req: CustomRequest, res: Response) => {
       username: updatedUser.username,
       email: updatedUser.email,
       photo: updatedUser.photo,
+      authMethod: updatedUser.authMethod,
     });
   } else {
     res.status(404);
