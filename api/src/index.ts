@@ -5,6 +5,7 @@ import { connectDB } from "./config/db";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/errorHandler";
 import { catchErrors } from "./utils/catchErrors";
+import { authRoutes } from "./routes/auth.route";
 import { OK } from "./constants/http";
 
 const app = express();
@@ -26,7 +27,7 @@ app.get(
   })
 );
 
-// app.use("/auth", authRoutes);
+app.use("/auth", authRoutes);
 
 app.use(errorHandler);
 
