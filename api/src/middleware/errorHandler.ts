@@ -14,7 +14,7 @@ const handleZodErrors = (res: Response, error: z.ZodError) => {
   });
 };
 
-export const errorHandler: ErrorRequestHandler = (
+const errorHandler: ErrorRequestHandler = (
   error: any,
   req: Request,
   res: Response,
@@ -28,3 +28,5 @@ export const errorHandler: ErrorRequestHandler = (
 
   return res.status(INTERNAL_SERVER_ERROR).send("Internal server Error.");
 };
+
+export default errorHandler;
