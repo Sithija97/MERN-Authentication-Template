@@ -1,5 +1,5 @@
 import { request, Request, Response } from "express";
-import { catchErrors } from "../utils/catchErrors";
+import catchErrors from "../utils/catchErrors";
 import { z } from "zod";
 
 const registerSchema = z
