@@ -54,5 +54,7 @@ export const createAccount = async (data: CreateAccountParams) => {
     JWT_REFRESH_SECRET,
     { audience: ["user"], expiresIn: "15m" }
   );
+
   // return user & tokens
+  return { user, accessToken, refreshToken };
 };
