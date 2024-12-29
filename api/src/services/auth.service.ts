@@ -63,5 +63,5 @@ export const createAccount = async (data: CreateAccountParams) => {
   );
 
   // return user & tokens
-  return { user, accessToken, refreshToken };
+  return { user: user.omitPassword(), accessToken, refreshToken };
 };
