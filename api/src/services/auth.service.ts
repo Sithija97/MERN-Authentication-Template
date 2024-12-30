@@ -53,7 +53,7 @@ export const createAccount = async (data: CreateAccountParams) => {
   });
 
   // sign access token & refresh token
-  /*const refreshToken = jwt.sign(
+  /* const refreshToken = jwt.sign(
     { sessionId: session._id },
     JWT_REFRESH_SECRET,
     { audience: ["user"], expiresIn: "30d" }
@@ -63,7 +63,7 @@ export const createAccount = async (data: CreateAccountParams) => {
     { userId: user._id, sessionId: session._id },
     JWT_REFRESH_SECRET,
     { audience: ["user"], expiresIn: "15m" }
-  );*/
+  ); */
 
   const refreshToken = signToken(
     { sessionId: session._id },
