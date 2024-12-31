@@ -2,10 +2,11 @@ import { clearAuthCookies, setAuthCookies } from "./../utils/cookies";
 import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors";
 import { createAccount, loginUser } from "../services/auth.service";
-import { CREATED, OK } from "../constants/http";
+import { CREATED, OK, UNAUTHORIZED } from "../constants/http";
 import { loginSchema, registerSchema } from "./auth.schemas";
 import { verifyToken } from "../utils/jwt";
 import SessionModel from "../models/session.model";
+import appAssert from "../utils/appAssert";
 
 export const registerHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -38,8 +39,8 @@ export const loginHandler = catchErrors(async (req: Request, res: Response) => {
 
 export const logoutHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const accessToken = req.cookies.accessToken;
-    const { payload } = verifyToken(accessToken);
+    const accessToken = req.cookies.accessToken as string | undefined;
+    const { payload } = verifyToken(accessToken || "");
 
     if (payload) {
       await SessionModel.findByIdAndDelete(payload.sessionId);
@@ -47,5 +48,12 @@ export const logoutHandler = catchErrors(
 
     clearAuthCookies(res);
     return res.status(OK).json({ message: "Logout successful" });
+  }
+);
+
+export const refreshHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken as string | undefined;
+    appAssert(refreshToken, UNAUTHORIZED, "Missing refresh token");
   }
 );
