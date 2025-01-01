@@ -1,7 +1,16 @@
-import { clearAuthCookies, setAuthCookies } from "./../utils/cookies";
+import {
+  clearAuthCookies,
+  getAccessTokenCookieOptions,
+  getRefreshTokenCookieOptions,
+  setAuthCookies,
+} from "./../utils/cookies";
 import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors";
-import { createAccount, loginUser } from "../services/auth.service";
+import {
+  createAccount,
+  loginUser,
+  refreshUserAccessToken,
+} from "../services/auth.service";
 import { CREATED, OK, UNAUTHORIZED } from "../constants/http";
 import { loginSchema, registerSchema } from "./auth.schemas";
 import { verifyToken } from "../utils/jwt";
@@ -55,5 +64,22 @@ export const refreshHandler = catchErrors(
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken as string | undefined;
     appAssert(refreshToken, UNAUTHORIZED, "Missing refresh token");
+
+    const { accessToken, newRefrehToken } = await refreshUserAccessToken(
+      refreshToken
+    );
+
+    if (newRefrehToken) {
+      res.cookie(
+        "refreshToken",
+        newRefrehToken,
+        getRefreshTokenCookieOptions()
+      );
+    }
+
+    return res
+      .status(OK)
+      .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+      .json({ message: "Access token refreshed" });
   }
 );

@@ -2,6 +2,7 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../constants/http";
 import AppError from "../utils/AppError";
 import { z } from "zod";
+import { clearAuthCookies, REFRESH_PATH } from "../utils/cookies";
 
 const handleZodErrors = (res: Response, error: z.ZodError) => {
   const errors = error.issues.map((err) => ({
@@ -36,6 +37,10 @@ const errorHandler: ErrorRequestHandler = (
 
   if (error instanceof AppError) {
     return handleAppError(res, error);
+  }
+
+  if (req.path === REFRESH_PATH) {
+    clearAuthCookies(res);
   }
 
   return res.status(INTERNAL_SERVER_ERROR).send("Internal server Error.");
