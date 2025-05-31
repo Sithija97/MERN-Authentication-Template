@@ -1,12 +1,11 @@
+import { RouterProvider } from "react-router";
+import { router } from "./router";
 import "./App.css";
-import { Button } from "@/atoms";
 
 function App() {
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-svh">
-        <Button>Click me</Button>
-      </div>
+      <RouterProvider router={router} />
     </>
   );
 }
