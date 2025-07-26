@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { registerRoutes } from "./routes/index.js";
 import { conncetDB } from "./config/db.js";
+import { errorHandler } from "./middleware/error.middleware.js";
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 });
 
 // Error handler
+app.use(errorHandler);
 
 // Connect to MongoDB
 conncetDB();

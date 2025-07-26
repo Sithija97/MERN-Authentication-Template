@@ -1,10 +1,14 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import User from "../models/user.model.js";
 import { AuthService } from "../services/index.js";
 import { Utils } from "../utils/index.js";
-import jwt from "jsonwebtoken";
+import CustomError from "../utils/error-handler.js";
 
-export const signUpController = async (req: Request, res: Response) => {
+export const signUpController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { username, email, password } = req.body;
 
   try {
@@ -13,10 +17,10 @@ export const signUpController = async (req: Request, res: Response) => {
       username
     );
     if (userExists) {
-      return res.status(401).json({
-        error: true,
-        message: "User alreay exists with this username or email.",
-      });
+      throw new CustomError(
+        "User alreay exists with this username or email.",
+        400
+      );
     }
 
     // hashing the password
@@ -30,24 +34,21 @@ export const signUpController = async (req: Request, res: Response) => {
       data: savedUser,
     });
   } catch (error) {
-    res.status(500).json({
-      error: true,
-      message: "Internal server error",
-      details: error instanceof Error ? error.message : error,
-    });
+    next(error);
   }
 };
 
-export const signInController = async (req: Request, res: Response) => {
+export const signInController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, password } = req.body;
 
   try {
     const user = await AuthService.fidUserByEmailOrUsername(email, password);
     if (!user) {
-      return res.status(401).json({
-        error: true,
-        message: "Username or email does not exist.",
-      });
+      throw new CustomError("Username or email does not exist.", 401);
     }
 
     // check the password
@@ -56,10 +57,7 @@ export const signInController = async (req: Request, res: Response) => {
       user.password
     );
     if (!corretPassword) {
-      return res.status(401).json({
-        error: true,
-        message: "Password does not match",
-      });
+      throw new CustomError("Password does not match.", 401);
     }
 
     const { accessToken, refreshToken } =
@@ -78,10 +76,6 @@ export const signInController = async (req: Request, res: Response) => {
       refreshToken,
     });
   } catch (error) {
-    res.status(500).json({
-      error: true,
-      message: "Internal server error",
-      details: error instanceof Error ? error.message : error,
-    });
+    next(error);
   }
 };

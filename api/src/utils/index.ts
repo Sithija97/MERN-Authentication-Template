@@ -5,3 +5,5 @@ export const Utils = {
   passwordHandler: { hanshPassword, comparePassword },
   authHandler: { generateTokens, setCookies },
 };
+
+export * from "./error-handler.js";
