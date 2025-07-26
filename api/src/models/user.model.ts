@@ -1,9 +1,10 @@
 import mongoose, { model } from "mongoose";
+import { IUser } from "../interfaces/user.js";
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
-  usernamee: {
+const userSchema = new Schema<IUser>({
+  username: {
     type: String,
     required: true,
     unique: true,

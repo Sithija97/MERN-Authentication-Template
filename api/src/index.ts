@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 import { registerRoutes } from "./routes/index.js";
+import { conncetDB } from "./config/db.js";
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +26,6 @@ app.get("/", (req, res) => {
 // Error handler
 
 // Connect to MongoDB
-const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/auth_app";
+conncetDB();
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
