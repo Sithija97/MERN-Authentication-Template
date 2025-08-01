@@ -12,7 +12,7 @@ type IProps = {
   props?: any;
 };
 
-export const VerifyEmail = ({ className, props }: IProps) => {
+export const VerifyOTP = ({ className, props }: IProps) => {
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">

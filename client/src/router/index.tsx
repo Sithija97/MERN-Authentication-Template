@@ -4,7 +4,7 @@ import {
   ResetPassword,
   SignIn,
   SignUp,
-  VerifyEmail,
+  VerifyOTP,
 } from "@/pages";
 import { AuthLayout, Layout } from "@/pages/layouts";
 import { createBrowserRouter } from "react-router-dom";
@@ -14,7 +14,7 @@ export const SIGN_IN = "/sign-in";
 export const SIGN_UP = "/sign-up";
 export const FORGOT_PASSWORD = "/forgot-password";
 export const RESET_PASSWORD = "/reset-password";
-export const VERIFY_EMAIL = "/verify-email";
+export const VERIFY_OTP = "/verify-otp";
 
 export const router = createBrowserRouter([
   {
@@ -46,8 +46,8 @@ export const router = createBrowserRouter([
         element: <ResetPassword />,
       },
       {
-        path: VERIFY_EMAIL,
-        element: <VerifyEmail />,
+        path: VERIFY_OTP,
+        element: <VerifyOTP />,
       },
     ],
   },

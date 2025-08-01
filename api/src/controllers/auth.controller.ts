@@ -29,6 +29,24 @@ export const signUpController = async (
     const user = new User({ username, email, password: hashedPassword });
     const savedUser = await user.save();
 
+    // send verification email
+    const verificationLink = `${process.env.FRONTEND_URL}/verify-otp?token=${savedUser._id}`;
+    const verificatonOtp = 123456;
+
+    // compose the verifcation email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: savedUser?.email,
+      subject: "Welcome to Our Authentication Service",
+      text: `Hello ${savedUser.username},\n\nThank you for signing up! Please verify your email by clicking the link below:\n${verificationLink}\n\nIf you did not sign up, please ignore this email.\n\nBest regards,\nYour Service Team`,
+      html: `<p>Hello ${savedUser.username},</p>
+             <p>Thank you for signing up! Please verify your email using the OTP ${verificatonOtp} by clicking this </p>a href="${verificationLink}">Verify<a/>
+             <p>If you did not sign up, please ignore this email.</p>
+             <p>Best regards,<br>Your Service Team</p>`,
+    };
+
+    await Utils.mailHandler.mailSender.sendMail(mailOptions);
+
     res.status(201).json({
       error: false,
       data: savedUser,

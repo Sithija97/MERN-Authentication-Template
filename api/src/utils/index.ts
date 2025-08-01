@@ -1,9 +1,11 @@
-import { generateTokens, setCookies } from "./authentication.js";
-import { comparePassword, hanshPassword } from "./password.js";
+import { generateTokens, setCookies } from "./auth-handler.js";
+import { comparePassword, hanshPassword } from "./password-handler.js";
+import CustomError from "./error-handler.js";
+import { mailSender } from "./mail-handler.js";
 
 export const Utils = {
   passwordHandler: { hanshPassword, comparePassword },
   authHandler: { generateTokens, setCookies },
+  mailHandler: { mailSender },
+  errorHandler: CustomError,
 };
-
-export * from "./error-handler.js";

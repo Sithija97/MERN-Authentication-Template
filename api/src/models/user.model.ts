@@ -1,5 +1,5 @@
 import mongoose, { model } from "mongoose";
-import { IUser } from "../interfaces/user.js";
+import { IUser } from "../interfaces/index.js";
 
 const { Schema } = mongoose;
 

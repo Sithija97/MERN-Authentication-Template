@@ -1,6 +1,6 @@
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import { registerRoutes } from "./routes/index.js";
 import { conncetDB } from "./config/db.js";
 import { errorHandler } from "./middleware/error.middleware.js";
