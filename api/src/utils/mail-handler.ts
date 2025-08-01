@@ -3,9 +3,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-console.log(process.env.SMTP_USER);
-console.log(process.env.SMTP_PASSWORD);
-
 export const mailSender = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
   port: 587,

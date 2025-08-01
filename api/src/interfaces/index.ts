@@ -4,7 +4,7 @@ export interface IUser {
   email: string;
   password: string;
   refreshToken?: string;
-  otp?: string;
+  otp?: number;
   email_verified?: boolean;
   createdAt?: Date;
   updatedAt?: Date;

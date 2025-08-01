@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes/index.js";
 import { conncetDB } from "./config/db.js";
-import { errorHandler } from "./middleware/error.middleware.js";
+import { errorHandler } from "./middleware/index.js";
 
 // Load environment variables
 dotenv.config();

@@ -22,8 +22,9 @@ const userSchema = new Schema<IUser>({
     type: String,
   },
   otp: {
-    type: String,
-    max: 6,
+    type: Number,
+    min: 100000,
+    max: 999999,
   },
   email_verified: {
     type: Boolean,

@@ -3,11 +3,13 @@ import {
   signInController,
   signUpController,
 } from "../controllers/auth.controller.js";
+import { validateSignUp } from "../middleware/validate.midleware.js";
+
 const authRoutes = express.Router();
 
 authRoutes.get("/users", (req: Request, res: Response) => {});
 
-authRoutes.post("/sign-up", signUpController);
+authRoutes.post("/sign-up", validateSignUp, signUpController);
 
 authRoutes.post("/sign-in", signInController);
 
