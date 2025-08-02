@@ -3,6 +3,17 @@ import { AuthService, MailService } from "../services/index.js";
 import { createOrUpdateUser } from "../services/auth.service.js";
 import { Utils } from "../utils/index.js";
 import CustomError from "../utils/error-handler.js";
+import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
+
+export const getUserByIdController = async (
+  req: Request | any,
+  res: Response,
+  next: NextFunction
+) => {
+  // params
+  const userId = req.user.userId;
+};
 
 export const signUpController = async (
   req: Request,
@@ -13,7 +24,7 @@ export const signUpController = async (
   const { username, email, password } = req.body;
 
   try {
-    const userExists = await AuthService.fidUserByEmailOrUsername(
+    const userExists = await AuthService.findUserByEmailOrUsername(
       email,
       username
     );
@@ -58,7 +69,7 @@ export const signInController = async (
   const { email, password } = req.body;
 
   try {
-    const user = await AuthService.fidUserByEmailOrUsername(email, password);
+    const user = await AuthService.findUserByEmailOrUsername(email, email);
     if (!user) {
       throw new CustomError("Username or email does not exist.", 401);
     }
@@ -75,17 +86,72 @@ export const signInController = async (
     const { accessToken, refreshToken } =
       await Utils.authHandler.generateTokens(user);
 
-    user.refreshToken = refreshToken;
-    await user.save();
+    // updating the refresh token in exisitng user
+    const userWithToken = await createOrUpdateUser(
+      { refreshToken: refreshToken },
+      user
+    );
 
     // set cookies
     Utils.authHandler.setCookies(res, accessToken, refreshToken);
 
     res.status(201).json({
       error: false,
-      data: user,
+      data: userWithToken,
       accessToken,
       refreshToken,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const refreshTokenController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!refreshToken) {
+    throw new CustomError("Refresh token not found", 401);
+  }
+
+  try {
+    // verify incoming refresh token & secrt key
+    const { error, decode } = await jwt.verify(
+      refreshToken,
+      process.env.JWT_SECRET,
+      (error, decode) => {
+        return { error, decode };
+      }
+    );
+
+    if (Boolean(error)) {
+      throw new CustomError("Invalid token", 401);
+    }
+
+    // find the user by refresh token
+    const user = await User.findById(decode?.data?.id);
+
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    if (user?.refreshToken !== refreshToken) {
+      throw new CustomError("Refresh token is not valid", 401);
+    }
+
+    // clear existing cookie
+    Utils.authHandler.clearCookies(res, "accessToken");
+
+    const { accessToken } = await Utils.authHandler.generateTokens(user);
+
+    Utils.authHandler.setCookies(res, accessToken);
+
+    res.status(200).json({
+      accessToken,
+      message: "Access token generated successfully",
     });
   } catch (error) {
     next(error);

@@ -20,18 +20,24 @@ export const generateTokens = async (user: IUser) => {
   return { accessToken, refreshToken };
 };
 
+const options = {
+  httpOnly: true,
+  secure: true,
+};
+
 export const setCookies = (
   res: Response,
-  accessToken: string,
-  refreshToken: string
+  accessToken?: string,
+  refreshToken?: string
 ) => {
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: true,
-  });
+  if (accessToken) res.cookie("accessToken", accessToken, options);
+  if (refreshToken) res.cookie("refreshToken", refreshToken, options);
+};
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-  });
+export const clearCookies = (
+  res: Response,
+  tokenName: "accessToken" | "refreshToken"
+) => {
+  if (tokenName === "accessToken") res.clearCookie("accessToken", options);
+  if (tokenName === "refreshToken") res.clearCookie("refreshToken", options);
 };

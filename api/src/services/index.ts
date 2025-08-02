@@ -1,12 +1,12 @@
 import {
   createOrUpdateUser,
-  fidUserByEmailOrUsername,
+  findUserByEmailOrUsername,
 } from "./auth.service.js";
 import { sendVerificationMail } from "./mail.service.js";
 
 export const AuthService = {
   createOrUpdateUser,
-  fidUserByEmailOrUsername,
+  findUserByEmailOrUsername,
 };
 
 export const MailService = {
