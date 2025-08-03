@@ -13,6 +13,20 @@ export const getUserByIdController = async (
 ) => {
   // params
   const userId = req.user.userId;
+  try {
+    const user = await AuthService.findUser({ id: userId });
+
+    if (!user) {
+      throw new CustomError("User with Id not found.", 404);
+    }
+
+    res.status(200).json({
+      message: "User fetch successfully",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const signUpController = async (
@@ -24,10 +38,7 @@ export const signUpController = async (
   const { username, email, password } = req.body;
 
   try {
-    const userExists = await AuthService.findUserByEmailOrUsername(
-      email,
-      username
-    );
+    const userExists = await AuthService.findUser({ email, username });
     if (userExists) {
       throw new CustomError(
         "User alreay exists with this username or email.",
@@ -69,7 +80,9 @@ export const signInController = async (
   const { email, password } = req.body;
 
   try {
-    const user = await AuthService.findUserByEmailOrUsername(email, email);
+    const user = await AuthService.findUser({
+      email,
+    });
     if (!user) {
       throw new CustomError("Username or email does not exist.", 401);
     }

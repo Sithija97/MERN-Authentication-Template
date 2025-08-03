@@ -1,11 +1,28 @@
+import { Document } from "mongoose";
 import { IUser } from "../interfaces/index.js";
 import User from "../models/user.model.js";
 
-export const findUserByEmailOrUsername = async (
-  email: string,
-  username?: string
-) => {
-  return await User.findOne({ $or: [{ username }, { email }] });
+export const findUser = async ({
+  id,
+  email,
+  username,
+}: {
+  id?: string;
+  email?: string;
+  username?: string;
+}) => {
+  const query: any = {};
+  if (id) query._id = id;
+  if (email) query.email = email;
+  if (username) query.username = username;
+
+  return await User.findOne({
+    $or: [
+      id ? { _id: id } : null,
+      email ? { email } : null,
+      username ? { username } : null,
+    ].filter(Boolean),
+  });
 };
 
 export const createOrUpdateUser = async (
