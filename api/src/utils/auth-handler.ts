@@ -41,3 +41,15 @@ export const clearCookies = (
   if (tokenName === "accessToken") res.clearCookie("accessToken", options);
   if (tokenName === "refreshToken") res.clearCookie("refreshToken", options);
 };
+
+export const generateDecodedToken = async (token: string) => {
+  const { error, decode } = await jwt.verify(
+    token,
+    process.env.JWT_SECRET,
+    (error, decode) => {
+      return { error, decode };
+    }
+  );
+
+  return { error, decode };
+};

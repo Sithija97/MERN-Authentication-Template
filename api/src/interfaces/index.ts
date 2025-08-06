@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export interface IUser {
   _id?: string; // Optional, will be assigned by MongoDB
   username: string;
@@ -13,4 +15,8 @@ export interface IUser {
 export interface CustomError extends Error {
   statusCode?: number;
   status?: string;
+}
+
+export interface CustomRequest extends Request {
+  user: { id: string; email: string };
 }
