@@ -219,6 +219,7 @@ export const forgetPasswordController = async (
     res.status(200).json({
       error: false,
       message: "Reset passowrd link has been sent",
+      token: accessToken,
     });
   } catch (error) {
     next(error);
