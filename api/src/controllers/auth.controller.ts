@@ -1,20 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService, MailService } from "../services/index.js";
-import { createOrUpdateUser } from "../services/auth.service.js";
+import { createOrUpdateUser, findUser } from "../services/auth.service.js";
 import { Utils } from "../utils/index.js";
 import CustomError from "../utils/error-handler.js";
-import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import { CustomRequest } from "../interfaces/index.js";
 
 export const getUserByIdController = async (
-  req: Request | any,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
 ) => {
   // params
-  const userId = req.user.userId;
+  const userId = req.user.id;
   try {
-    const user = await AuthService.findUser({ id: userId });
+    const user = await AuthService.findUser({ id: userId }, [
+      "-password",
+      "-refreshToken",
+      "-otp",
+      "-__v",
+    ]);
 
     if (!user) {
       throw new CustomError("User with Id not found.", 404);
@@ -108,7 +113,7 @@ export const signInController = async (
     // set cookies
     Utils.authHandler.setCookies(res, accessToken, refreshToken);
 
-    res.status(201).json({
+    res.status(200).json({
       error: false,
       data: userWithToken,
       accessToken,
@@ -132,12 +137,8 @@ export const refreshTokenController = async (
 
   try {
     // verify incoming refresh token & secrt key
-    const { error, decode } = await jwt.verify(
-      refreshToken,
-      process.env.JWT_SECRET,
-      (error, decode) => {
-        return { error, decode };
-      }
+    const { error, decode } = await Utils.authHandler.generateDecodedToken(
+      refreshToken
     );
 
     if (Boolean(error)) {
@@ -170,3 +171,62 @@ export const refreshTokenController = async (
     next(error);
   }
 };
+
+export const verifyMailController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // await Utils.validationHandler.isFieldErrorFree(req, res);
+  const { otp, userId } = req.body;
+
+  try {
+    const user = await findUser({ id: userId });
+
+    if (!user) {
+      throw new CustomError("User with this Id not found!", 401);
+    }
+
+    if (user.otp !== otp) {
+      throw new CustomError("OTP does not match", 401);
+    }
+
+    const response = await createOrUpdateUser({ email_verified: true }, user);
+    res.status(200).json({ response, message: "Email verified successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgetPasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email } = req.body;
+
+  try {
+    const user = await AuthService.findUser({
+      email,
+    });
+    if (!user) {
+      throw new CustomError("Username or email does not exist.", 401);
+    }
+
+    // send email with reset password link
+    const accessToken = await MailService.sendForgetPasswordLink(user);
+
+    res.status(200).json({
+      error: false,
+      message: "Reset passowrd link has been sent",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {};

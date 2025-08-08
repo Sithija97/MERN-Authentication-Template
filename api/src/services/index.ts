@@ -1,5 +1,8 @@
 import { createOrUpdateUser, findUser } from "./auth.service.js";
-import { sendVerificationMail } from "./mail.service.js";
+import {
+  sendForgetPasswordLink,
+  sendVerificationMail,
+} from "./mail.service.js";
 
 export const AuthService = {
   createOrUpdateUser,
@@ -8,4 +11,5 @@ export const AuthService = {
 
 export const MailService = {
   sendVerificationMail,
+  sendForgetPasswordLink,
 };

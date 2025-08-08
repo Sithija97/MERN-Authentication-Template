@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { registerRoutes } from "./routes/index.js";
 import { conncetDB } from "./config/db.js";
 import { errorHandler } from "./middleware/index.js";
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Routes
 registerRoutes(app);
