@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import {
   forgetPasswordController,
   getUserByIdController,
+  resetPasswordController,
   signInController,
   signUpController,
   verifyMailController,
@@ -20,6 +21,12 @@ authRoutes.post("/sign-in", signInController);
 authRoutes.post("/mail-verification", verifyMailController);
 
 authRoutes.post("/forget-password", forgetPasswordController);
+
+authRoutes.post(
+  "/reset-password",
+  authenticatedRoutes,
+  resetPasswordController
+);
 
 authRoutes.post("/sign-out", (req: Request, res: Response) => {});
 

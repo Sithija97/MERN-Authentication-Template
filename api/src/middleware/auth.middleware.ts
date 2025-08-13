@@ -9,9 +9,15 @@ export const authenticatedRoutes = async (
   next: NextFunction
 ) => {
   try {
-    const token =
-      req.cookies?.accessToken ||
-      req.header("Authorization")?.replace("Bearer ", "");
+    let token: string;
+
+    if (req.path.startsWith("/reset-password")) {
+      token = req.header("Authorization")?.replace("Bearer ", "");
+    } else {
+      token =
+        req.cookies?.accessToken ||
+        req.header("Authorization")?.replace("Bearer ", "");
+    }
 
     if (!token) {
       throw new CustomError("Token not fond", 401);

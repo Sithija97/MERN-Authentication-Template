@@ -52,7 +52,7 @@ export const signUpController = async (
     }
 
     // hashing the password
-    const hashedPassword = await Utils.passwordHandler.hanshPassword(password);
+    const hashedPassword = await Utils.passwordHandler.hashPassword(password);
 
     const savedUser = await AuthService.createOrUpdateUser({
       username,
@@ -227,7 +227,72 @@ export const forgetPasswordController = async (
 };
 
 export const resetPasswordController = async (
-  req: Request,
+  req: CustomRequest,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const userId = req.user?.id;
+  const { password } = req.body;
+
+  try {
+    const user = await findUser({ id: userId }, [
+      "-password",
+      "-refreshToken",
+      "-otp",
+      "-__v",
+    ]);
+
+    if (!user) {
+      throw new CustomError("User with id not found!", 401);
+    }
+
+    const hashedPassword = await Utils.passwordHandler.hashPassword(password);
+
+    await createOrUpdateUser(
+      {
+        password: hashedPassword,
+      },
+      user
+    );
+
+    const updatedUser = await findUser({ id: userId }, [
+      "-password",
+      "-refreshToken",
+      "-otp",
+      "-__v",
+    ]);
+
+    res.status(201).json({
+      message: "Password update success",
+      data: updatedUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const logOutController = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = req.user.id;
+
+  const user = await AuthService.findUser({ id: userId }, [
+    "-password",
+    "-refreshToken",
+    "-otp",
+    "-__v",
+  ]);
+
+  if (!user) {
+    throw new CustomError("User with Id not found.", 404);
+  }
+
+  Utils.authHandler.clearCookies(res, "accessToken", "refreshToken");
+
+  res.status(200).json({
+    error: false,
+    message: "Logout Success",
+  });
+};

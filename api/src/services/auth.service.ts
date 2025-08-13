@@ -29,6 +29,7 @@ export const findUser = async (
   const user = await query;
   return user;
 };
+
 export const createOrUpdateUser = async (
   userData: Partial<IUser>,
   updatedData?: IUser
@@ -37,8 +38,6 @@ export const createOrUpdateUser = async (
     for (const key in userData) {
       if (userData[key] !== undefined) {
         updatedData[key] = userData[key] as any;
-        console.log(updatedData[key]);
-        console.log(userData[key]);
       }
     }
 

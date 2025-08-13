@@ -36,10 +36,16 @@ export const setCookies = (
 
 export const clearCookies = (
   res: Response,
-  tokenName: "accessToken" | "refreshToken"
+  tokenName: "accessToken" | "refreshToken",
+  secondTokenName?: "accessToken" | "refreshToken"
 ) => {
-  if (tokenName === "accessToken") res.clearCookie("accessToken", options);
-  if (tokenName === "refreshToken") res.clearCookie("refreshToken", options);
+  if (tokenName === "accessToken" || secondTokenName === "accessToken") {
+    res.clearCookie("accessToken", options);
+  }
+
+  if (tokenName === "refreshToken" || secondTokenName === "refreshToken") {
+    res.clearCookie("refreshToken", options);
+  }
 };
 
 export const generateDecodedToken = async (token: string) => {
