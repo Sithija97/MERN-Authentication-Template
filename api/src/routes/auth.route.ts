@@ -12,7 +12,7 @@ import { authenticatedRoutes } from "../middleware/auth.middleware.js";
 
 const authRoutes = express.Router();
 
-authRoutes.get("/user/:userid", authenticatedRoutes, getUserByIdController);
+authRoutes.get("/user", authenticatedRoutes, getUserByIdController);
 
 authRoutes.post("/sign-up", validateSignUp, signUpController);
 
