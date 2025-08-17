@@ -39,3 +39,14 @@ export const authenticatedRoutes = async (
     next(error);
   }
 };
+
+export const authorizeRoles = (...roles: string[]) => {
+  return (req: CustomRequest, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user.role)) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to access this resource" });
+    }
+    next();
+  };
+};

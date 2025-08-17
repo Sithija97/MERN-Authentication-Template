@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { UserRoles } from "../enums/index.js";
 
 export interface IUser {
   _id?: string; // Optional, will be assigned by MongoDB
@@ -10,6 +11,7 @@ export interface IUser {
   email_verified?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  role: UserRoles;
 }
 
 export interface CustomError extends Error {
@@ -18,5 +20,5 @@ export interface CustomError extends Error {
 }
 
 export interface CustomRequest extends Request {
-  user: { id: string; email: string };
+  user: { id: string; email: string; role: UserRoles };
 }

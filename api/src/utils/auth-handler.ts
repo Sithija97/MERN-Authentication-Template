@@ -4,13 +4,13 @@ import { Response } from "express";
 
 export const generateTokens = async (user: IUser) => {
   const accessToken = await jwt.sign(
-    { data: { email: user?.email, id: user._id } },
+    { data: { email: user?.email, id: user._id, role: user.role } },
     process.env.JWT_SECRET!,
     { expiresIn: 60 * 60 } // 1 hour
   );
 
   const refreshToken = await jwt.sign(
-    { data: { email: user?.email, id: user._id } },
+    { data: { email: user?.email, id: user._id, role: user.role } },
     process.env.JWT_SECRET!,
     {
       expiresIn: "7d",

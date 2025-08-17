@@ -1,5 +1,6 @@
 import mongoose, { model } from "mongoose";
 import { IUser } from "../interfaces/index.js";
+import { UserRoles } from "../enums/index.js";
 
 const { Schema } = mongoose;
 
@@ -29,6 +30,11 @@ const userSchema = new Schema<IUser>({
   email_verified: {
     type: Boolean,
     default: false,
+  },
+  role: {
+    type: String,
+    enum: Object.values(UserRoles),
+    default: UserRoles.USER,
   },
 });
 

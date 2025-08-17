@@ -2,17 +2,27 @@ import express, { Request, Response } from "express";
 import {
   forgetPasswordController,
   getUserByIdController,
+  logOutController,
   resetPasswordController,
   signInController,
   signUpController,
   verifyMailController,
 } from "../controllers/auth.controller.js";
 import { validateSignUp } from "../middleware/validate.midleware.js";
-import { authenticatedRoutes } from "../middleware/auth.middleware.js";
+import {
+  authenticatedRoutes,
+  authorizeRoles,
+} from "../middleware/auth.middleware.js";
+import { UserRoles } from "../enums/index.js";
 
 const authRoutes = express.Router();
 
-authRoutes.get("/user", authenticatedRoutes, getUserByIdController);
+authRoutes.get(
+  "/user",
+  authenticatedRoutes,
+  authorizeRoles(UserRoles.ADMIN),
+  getUserByIdController
+);
 
 authRoutes.post("/sign-up", validateSignUp, signUpController);
 
@@ -28,6 +38,6 @@ authRoutes.post(
   resetPasswordController
 );
 
-authRoutes.post("/sign-out", (req: Request, res: Response) => {});
+authRoutes.post("/sign-out", authenticatedRoutes, logOutController);
 
 export default authRoutes;
