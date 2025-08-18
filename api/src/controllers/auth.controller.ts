@@ -34,13 +34,34 @@ export const getUserByIdController = async (
   }
 };
 
+export const getAllUsersController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const users = await AuthService.findUsers();
+
+    if (!users) {
+      throw new CustomError("Users not found.", 404);
+    }
+
+    res.status(200).json({
+      message: "Users fetch successfully",
+      data: users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const signUpController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   await Utils.validationHandler.isFieldErrorFree(req, res);
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body;
 
   try {
     const userExists = await AuthService.findUser({ email, username });
@@ -58,6 +79,7 @@ export const signUpController = async (
       username,
       email,
       password: hashedPassword,
+      role: role,
     });
 
     // send verification email

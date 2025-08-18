@@ -1,4 +1,4 @@
-import { createOrUpdateUser, findUser } from "./auth.service.js";
+import { createOrUpdateUser, findUsers, findUser } from "./auth.service.js";
 import {
   sendForgetPasswordLink,
   sendVerificationMail,
@@ -6,6 +6,7 @@ import {
 
 export const AuthService = {
   createOrUpdateUser,
+  findUsers,
   findUser,
 };
 

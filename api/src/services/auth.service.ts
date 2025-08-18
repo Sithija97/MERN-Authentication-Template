@@ -30,6 +30,16 @@ export const findUser = async (
   return user;
 };
 
+export const findUsers = async () => {
+  const users = await User.find({}, [
+    "-password",
+    "-refreshToken",
+    "-otp",
+    "-__v",
+  ]);
+  return users;
+};
+
 export const createOrUpdateUser = async (
   userData: Partial<IUser>,
   updatedData?: IUser

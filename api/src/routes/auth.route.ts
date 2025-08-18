@@ -7,6 +7,7 @@ import {
   signInController,
   signUpController,
   verifyMailController,
+  getAllUsersController,
 } from "../controllers/auth.controller.js";
 import { validateSignUp } from "../middleware/validate.midleware.js";
 import {
@@ -17,11 +18,13 @@ import { UserRoles } from "../enums/index.js";
 
 const authRoutes = express.Router();
 
+authRoutes.get("/user", authenticatedRoutes, getUserByIdController);
+
 authRoutes.get(
-  "/user",
+  "/users",
   authenticatedRoutes,
   authorizeRoles(UserRoles.ADMIN),
-  getUserByIdController
+  getAllUsersController
 );
 
 authRoutes.post("/sign-up", validateSignUp, signUpController);
