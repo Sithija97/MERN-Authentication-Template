@@ -1,35 +1,28 @@
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
-import { registerRoutes } from "./routes/index.js";
+import { appConfig } from "./config/app.config.js";
 import { conncetDB } from "./config/db.js";
-import { errorHandler } from "./middleware/index.js";
 
-// Load environment variables
-dotenv.config();
+const startServer = async () => {
+  const app = express();
 
-// Create Express app
-const app = express();
-const PORT = process.env.PORT || 3000;
+  // CORS configuration (example using Express)
+  // const corsOptions = {
+  //   origin: "http://localhost:5173", // Your frontend URL
+  //   credentials: true, // Allow credentials (cookies)
+  //   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  //   allowedHeaders: ["Content-Type", "Authorization"],
+  // };
+  app.use(cors());
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+  // Handle preflight requests
+  app.options("*", cors());
 
-// Routes
-registerRoutes(app);
+  // database connection
+  await conncetDB();
+  // App Default Config
+  await appConfig(app);
+};
 
-app.get("/", (req, res) => {
-  res.status(200).send("Hello to the API!");
-});
-
-// Error handler
-app.use(errorHandler);
-
-// Connect to MongoDB
-conncetDB();
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+startServer();
